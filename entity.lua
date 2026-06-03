@@ -169,21 +169,24 @@ if CLIENT then
     local cor = coroutine.wrap(function()
         while true do
             coroutine.yield()
+            local newToInit = {}
             for i, v in ipairs(toInit) do
+                newToInit[i] = v
                 -- Get type of this entity
                 local self = ents.registered[v.id]
                 if !self then goto cont end
                 local nwVars = v.networkedVariables
-                while !isValid(entity(v.entId)) do coroutine.yield() end
                 local ent = entity(v.entId)
+                if !isValid(ent) then goto cont end
                 local obj = setmetatable({ ent = ent, networkedVariables = nwVars }, self)
                 -- Finally, last step: initialize it on a client
                 if obj.initialize then obj:initialize() end
                 ents.inited[ent:entIndex()] = obj
                 obj:networkVariablesUpdate({}, nwVars)
-                toInit[i] = nil
+                newToInit[i] = nil
                 ::cont::
             end
+            toInit = newToInit
         end
     end)
 
