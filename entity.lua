@@ -289,13 +289,16 @@ function ents.register(class, inheritFrom)
             -- It makes optimization to ~20% on every entity with client Render hooks
             -- and also bypasses a limits
             hook.add(name, hookId, function(...)
+                local val
                 for _, v in pairs(ents.inited) do
                     if !isValid(v.ent) then goto cont end
                     local currentHook = thisHook[v.Identifier]
                     if !currentHook then goto cont end
-                    currentHook(v, ...)
+                    local ret = currentHook(v, ...)
+                    val = ret == nil and val or ret
                     ::cont::
                 end
+                return val
             end)
         end
         ents.hooks[name][id] = func
