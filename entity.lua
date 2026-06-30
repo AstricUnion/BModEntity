@@ -133,6 +133,7 @@ if SERVER then
     ---@param changeNow boolean? Don't wait for next tick to change this var
     function BModEntity:setNWVar(key, value, changeNow)
         if !istable(value) and self.networkedVariables[key] == value then return end
+        value = value == nil and false or value ~= nil and value
         self.networkedVariables[key] = value
         self.nwToSend[key] = value
         local sendChanges = function()
