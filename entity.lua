@@ -67,7 +67,9 @@ if SERVER then
         local pr = self:createModel()
         pr:setPos(pos)
         pr:setAngles(ang)
-        pr:setFrozen(freeze)
+        if pr:isValidPhys() then
+            pr:setFrozen(freeze)
+        end
         -- Just to identify it, if we have only prop
         pr.BModEntity = self.Identifier
         self.ent = pr
