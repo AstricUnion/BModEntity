@@ -110,9 +110,10 @@ if SERVER then
     function BModEntity:remove()
         if isValid(self.ent) then
             self.ent:remove()
-            ents.inited[self.ent:entIndex()] = nil
+            local entId = self.ent:entIndex()
+            ents.inited[entId] = nil
             net.start("BModRemoveEntity")
-                net.writeEntity(self.ent)
+                net.writeUInt(entId, 32)
             net.send(find.allPlayers())
         end
         self:onRemove()
@@ -223,14 +224,12 @@ if CLIENT then
 
     -- Initialize entity on client
     net.receive("BModRemoveEntity", function()
-        net.readEntity(function(ent)
-            local id = ent:entIndex()
-            local tbl = ents.inited[id]
-            if !isValid(tbl) then return end
-            ents.inited[id] = nil
-            tbl:onRemove()
-            setmetatable(tbl, nil)
-        end)
+        local id = net.readUInt(32)
+        local tbl = ents.inited[id]
+        if !isValid(tbl) then return end
+        ents.inited[id] = nil
+        tbl:onRemove()
+        setmetatable(tbl, nil)
     end)
 end
 
