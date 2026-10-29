@@ -80,7 +80,7 @@ if SERVER then
                 networkedVariables = self.networkedVariables,
                 entId = self.ent:entIndex(),
             }})
-        net.send(find.allPlayers())
+        net.send()
         -- And finally, initialize this entity
         ents.inited[pr:entIndex()] = self
         if self.initialize then self:initialize() end
